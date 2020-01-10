@@ -1,4 +1,4 @@
-package leaderboard
+package datasource
 
 // Entry is a leaderboard row containing
 // a name, score, and metadata
