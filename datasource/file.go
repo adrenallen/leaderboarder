@@ -2,9 +2,11 @@ package datasource
 
 import (
 	"encoding/csv"
-	"strings"
 	"fmt"
+	"io"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type File struct {
@@ -14,7 +16,29 @@ type File struct {
 
 func (f File) GetAll() []Entry {
 
-	return []Entry{}
+	entries := []Entry{}
+	file := f.getFile()
+	reader := csv.NewReader(file)
+	reader.Comma = f.getDelimiter()
+
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			panic(err)
+		}
+
+		scoreVal, _ := strconv.ParseFloat(record[1], 64)
+		entries = append(entries, Entry{
+			Name:  record[0],
+			Score: scoreVal,
+			Meta:  record[2],
+		})
+	}
+
+	return entries
+
 }
 
 func (f File) SaveNew(entry Entry) {
@@ -34,12 +58,12 @@ func (f File) SaveNew(entry Entry) {
 		},
 	})
 
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 
 	err = file.Close()
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 }
@@ -54,7 +78,7 @@ func (f File) getDelimiter() rune {
 
 func (f File) getFile() *os.File {
 	f.ensureFileExists()
-	file, err := os.OpenFile(f.FilePath, os.O_WRONLY, os.ModeAppend)
+	file, err := os.OpenFile(f.FilePath, os.O_RDWR, os.ModeAppend)
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +95,7 @@ func (f File) ensureFileExists() {
 			panic(err)
 		}
 		f.Close()
-	}  else if err != nil{
+	} else if err != nil {
 		panic(err)
 	}
 }

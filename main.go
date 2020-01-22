@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -24,7 +24,11 @@ func main() {
 }
 
 func retrieveLeaderboard(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Working!")
+	entries := h.GetAll()
+	entriesJSON, _ := json.Marshal(entries)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(entriesJSON)
 }
 
 func newEntry(w http.ResponseWriter, r *http.Request) {

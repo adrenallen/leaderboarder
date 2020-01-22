@@ -17,3 +17,7 @@ func (h Handler) NewEntry(name string, score float64, meta string) error{
 	h.Data.SaveNew(e)
 	return nil
 }
+
+func (h Handler) GetAll() []datasource.Entry{
+	return h.Data.GetAll()
+}
