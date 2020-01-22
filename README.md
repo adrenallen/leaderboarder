@@ -9,9 +9,8 @@ Build a leaderboard for any application you can think of in under 5 minutes
 
 
 ## TODO
-
-- [ ] SSH key support for encrypting connections
+- [ ] TLS support for encrypting connections
 - [ ] Filtering leaderboard retrieval via basic query language
-- [ ] Optional leaderboard front-end support!  Just toggle to serve your leaderboard via a built-in web server. (No HTTPS support!)
+- [ ] Optional leaderboard front-end support!  Just toggle to serve your leaderboard via a built-in web server.
 - [ ] Support for multiple back-ends for saving data (it's extensible today)
 - [ ] Schema definitions for metadata acceptance

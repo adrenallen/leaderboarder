@@ -4,23 +4,48 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/adrenallen/leaderboarder/datasource"
 	"github.com/adrenallen/leaderboarder/leaderboard"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 var h leaderboard.Handler
 
 func main() {
-	ds := datasource.File{FilePath: "./data.record"}
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("Failed to load .env: %s", err.Error())
+	}
+
+	port := getEnvOrDefault("PORT", "9001")
+
+	ds := getDatasource()
+
 	h = leaderboard.Handler{Data: ds}
 	router := mux.NewRouter()
 	router.HandleFunc("/", retrieveLeaderboard).Methods("GET")
 	router.HandleFunc("/new", newEntry).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
+}
+
+func getDatasource() datasource.DataSource {
+	//TODO - update this to check for the type of datasource
+	filePath := getEnvOrDefault("DATA_FILE", "./data.record")
+	return datasource.File{FilePath: filePath}
+}
+
+func getEnvOrDefault(name string, defaultVal string) string {
+	val := os.Getenv(name)
+	if val == "" {
+		return defaultVal
+	}
+	return val
 }
 
 func retrieveLeaderboard(w http.ResponseWriter, r *http.Request) {
