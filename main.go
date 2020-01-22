@@ -16,10 +16,9 @@ import (
 var h leaderboard.Handler
 
 func main() {
-
 	err := godotenv.Load()
 	if err != nil {
-		log.Printf("Failed to load .env: %s", err.Error())
+		log.Printf("%s\nFailed to load .env - using defaults", err.Error())
 	}
 
 	port := getEnvOrDefault("PORT", "9001")
@@ -37,7 +36,7 @@ func main() {
 func getDatasource() datasource.DataSource {
 	//TODO - update this to check for the type of datasource
 	filePath := getEnvOrDefault("DATA_FILE", "./data.record")
-	return datasource.File{FilePath: filePath}
+	return &datasource.File{FilePath: filePath}
 }
 
 func getEnvOrDefault(name string, defaultVal string) string {
