@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"github.com/gorilla/mux"
+	"strconv"
+
+	"github.com/adrenallen/leaderboarder/datasource"
 	"github.com/adrenallen/leaderboarder/leaderboard"
+	"github.com/gorilla/mux"
 )
 
-func main() {
+var h leaderboard.Handler
 
-	h := leaderboard.Handler{}
-	h.Test()
+func main() {
+	ds := datasource.File{FilePath: "./data.record"}
+	h = leaderboard.Handler{Data: ds}
 	router := mux.NewRouter()
 	router.HandleFunc("/", retrieveLeaderboard).Methods("GET")
 	router.HandleFunc("/new", newEntry).Methods("POST")
@@ -24,5 +28,19 @@ func retrieveLeaderboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func newEntry(w http.ResponseWriter, r *http.Request) {
-	return
+	n := r.FormValue("name")
+	s := r.FormValue("score")
+	m := r.FormValue("meta")
+	sFloat, err := strconv.ParseFloat(s, 64)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
+	err = h.NewEntry(n, sFloat, m)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
 }

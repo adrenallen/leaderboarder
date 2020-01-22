@@ -7,5 +7,5 @@ type Entry struct {
 	Score float64
 
 	//meta data about this entry
-	Meta interface{}
+	Meta string
 }
