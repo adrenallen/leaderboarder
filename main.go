@@ -28,7 +28,7 @@ func main() {
 	h = leaderboard.Handler{Data: ds}
 	router := mux.NewRouter()
 	router.HandleFunc("/", retrieveLeaderboard).Methods("GET")
-	router.HandleFunc("/new", newEntry).Methods("POST")
+	router.HandleFunc("/submit", newEntry).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":" + port, router))
 }
